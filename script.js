@@ -8,6 +8,7 @@ const Keyboard = {
     properties: {
         value: "",
         capsLock: false,
+        shift: false
     },
 
     init() { //fires onload, making HTML&CSS for main elements
@@ -72,8 +73,12 @@ const Keyboard = {
                         keyElement.classList.add("keyboard__key--wide", "keyboard__key--activatable");
                         keyElement.textContent = 'Shift';
                         keyElement.addEventListener("click", () => {
-                            //this.shiftFunctions();
-                            keyElement.classList.toggle("keyboard__key--active");
+                            this.properties.shift = !this.properties.shift;
+                            if (this.properties.shift) this.shiftMode(true);
+                            else this.shiftMode(false); // numbers to Symbols in keyboard, some letters to symbols
+                               
+                            keyElement.classList.toggle("keyboard__key--active", this.properties.shift);
+                           
                         });
                         break;
 
@@ -123,7 +128,10 @@ const Keyboard = {
                         default:
                         keyElement.textContent = key.toLowerCase();
                         keyElement.addEventListener("click", () => {
-                            this.properties.value += this.properties.capsLock ? key.toUpperCase() : key.toLowerCase();
+                            if (this.properties.shift) {
+                                this.properties.value += this.properties.capsLock ? keyElement.textContent.toLowerCase() : keyElement.textContent.toUpperCase();
+                            }
+                            else this.properties.value += this.properties.capsLock ? keyElement.textContent.toUpperCase() : keyElement.textContent.toLowerCase();
                             this.updateDisplay();
                         });
                         break;
@@ -167,15 +175,41 @@ const Keyboard = {
                 }
             }
         });
+        if(this.properties.shift) this.shiftMode(true);
+    },
+
+    shiftMode(mode) {
+        if(mode) { //shift active
+            if(this.elements.main.classList.contains('english')) { //for english language
+                const shiftLayout = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")"];
+                for (let i = 0; i < 10; i++ ) {
+                    this.elements.keys[i].textContent = shiftLayout[i];
+                }
+            }
+            else { //for russian language
+                const shiftLayout = ["!", "\"", "№", ";", "%", ":", "?", "*", "(", ")"];
+                for (let i = 0; i < 10; i++ ) {
+                    this.elements.keys[i].textContent = shiftLayout[i];
+                }
+                this.elements.keys[47].textContent = ",";
+            }
+        }
+        else { //shift inactive
+            const regLayout = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+                for (let i = 0; i < 10; i++ ) {
+                    this.elements.keys[i].textContent = regLayout[i];
+            }
+            this.elements.keys[47].textContent = "?";
+        }
     },
 
     updateDisplay() {
        textDisplay.textContent = this.properties.value;
+       textDisplay.focus();
     },
 
     toggleCapsLock() {
         this.properties.capsLock = !this.properties.capsLock;
-
         for (const key of this.elements.keys) {
             if (key.childElementCount === 0 && key.textContent !== "Shift") key.textContent = this.properties.capsLock ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
         }
@@ -194,3 +228,5 @@ window.addEventListener('load', () => Keyboard.init());
 
 let textDisplay = document.querySelector('.use-keyboard-input');
 textDisplay.addEventListener('click', () => Keyboard.open());
+
+
