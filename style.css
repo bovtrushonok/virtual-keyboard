@@ -1,4 +1,5 @@
-.use-keyboard-input {
+/* textarea block */
+.use-keyboard-input { 
   display: block;
   width: 90%;
   margin: 30px auto;
