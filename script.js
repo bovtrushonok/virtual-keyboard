@@ -7,7 +7,7 @@ const Keyboard = {
 
     properties: {
         value: "",
-        capsLock: false
+        capsLock: false,
     },
 
     init() { //fires onload, making HTML&CSS for main elements
@@ -64,9 +64,17 @@ const Keyboard = {
 
                         keyElement.addEventListener("click", () => {
                             this.toggleCapsLock();
-                            keyElement.classList.toggle("keyboard__key--active"/*, this.properties.capsLock*/);
+                            keyElement.classList.toggle("keyboard__key--active", this.properties.capsLock);
                         });
+                        break;
 
+                        case "shift":
+                        keyElement.classList.add("keyboard__key--wide", "keyboard__key--activatable");
+                        keyElement.textContent = 'Shift';
+                        keyElement.addEventListener("click", () => {
+                            //this.shiftFunctions();
+                            keyElement.classList.toggle("keyboard__key--active");
+                        });
                         break;
 
                         case "enter":
@@ -167,6 +175,10 @@ const Keyboard = {
 
     toggleCapsLock() {
         this.properties.capsLock = !this.properties.capsLock;
+
+        for (const key of this.elements.keys) {
+            if (key.childElementCount === 0 && key.textContent !== "Shift") key.textContent = this.properties.capsLock ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
+        }
     },
 
     open() { //showKeyboard
