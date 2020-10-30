@@ -34,7 +34,7 @@ const Keyboard = {
             "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "en",
             "caps", "a", "s", "d", "f", "g", "h", "j", "k", "l", ":", "'", "enter",
             "done", "z", "x", "c", "v", "b", "n", "m", ",", ".", "?", "shift",
-            "space"];
+            "space", "fast_rewind", "fast_forward"];
         
         const createIconHTML = (icon_name) => (`<i class="material-icons">${icon_name}</i>`);
         let chosenKeysLayout;
@@ -53,8 +53,15 @@ const Keyboard = {
                         keyElement.classList.add("keyboard__key--wide");
                         keyElement.innerHTML = createIconHTML("backspace");
                         keyElement.addEventListener("click", () => {
-                            this.properties.value = this.properties.value.substring(0, this.properties.value.length - 1);
-                            this.updateDisplay();
+                            let changeValue = this.properties.value.split('');
+                            let cursorPos = textDisplay.selectionStart - 1;
+                            changeValue.splice(textDisplay.selectionStart - 1, 1);
+                            this.properties.value = changeValue.join('');
+                            textDisplay.textContent = this.properties.value;
+                          
+                            textDisplay.focus();
+                            textDisplay.selectionStart = textDisplay.selectionEnd = cursorPos;
+                           
                         });
 
                         break;
@@ -86,8 +93,14 @@ const Keyboard = {
                         keyElement.classList.add("keyboard__key--wide");
                         keyElement.innerHTML = createIconHTML("keyboard_return");
                         keyElement.addEventListener("click", () => {
-                            this.properties.value += "\n";
-                            this.updateDisplay();
+                            let changeValue = this.properties.value.split('');
+                            let cursorPos = textDisplay.selectionStart;
+                            changeValue.splice(textDisplay.selectionStart, 0, '\n');
+                            this.properties.value = changeValue.join('');
+                            textDisplay.textContent = this.properties.value;
+                          
+                            textDisplay.focus();
+                            textDisplay.selectionStart = textDisplay.selectionEnd = cursorPos + 2;
                         });
 
                         break;
@@ -109,11 +122,41 @@ const Keyboard = {
                         keyElement.innerHTML = createIconHTML("space_bar");
 
                         keyElement.addEventListener("click", () => {
-                            this.properties.value += " ";
-                            this.updateDisplay();
+                            let changeValue = this.properties.value.split('');
+                            let cursorPos = textDisplay.selectionStart;
+                            changeValue.splice(textDisplay.selectionStart, 0, ' ');
+                            this.properties.value = changeValue.join('');
+                            textDisplay.textContent = this.properties.value;
+                          
+                            textDisplay.focus();
+                            textDisplay.selectionStart = textDisplay.selectionEnd = cursorPos + 1;
                         });
 
                         break;
+
+                        case "fast_rewind":
+                        keyElement.classList.add("keyboard__key--wide");
+                        keyElement.innerHTML = createIconHTML("fast_rewind");
+
+                        keyElement.addEventListener("click", () => {
+                            textDisplay.selectionStart = textDisplay.selectionEnd = --textDisplay.selectionStart;
+                            textDisplay.focus();
+                        });
+                        
+                        break;
+
+                        case "fast_forward":
+                        keyElement.classList.add("keyboard__key--wide");
+                        keyElement.innerHTML = createIconHTML("fast_forward");
+
+                        keyElement.addEventListener("click", () => {
+                            textDisplay.selectionStart = textDisplay.selectionEnd = ++textDisplay.selectionStart;
+                            textDisplay.focus();
+                        });
+
+                        break;
+                      
+
 
                         case "done":
                         keyElement.classList.add("keyboard__key--wide", "keyboard__key--dark");
@@ -128,11 +171,24 @@ const Keyboard = {
                         default:
                         keyElement.textContent = key.toLowerCase();
                         keyElement.addEventListener("click", () => {
+                            let changeValue = this.properties.value.split('');
+                            let cursorPos = textDisplay.selectionStart;
                             if (this.properties.shift) {
-                                this.properties.value += this.properties.capsLock ? keyElement.textContent.toLowerCase() : keyElement.textContent.toUpperCase();
+                                
+                                if (this.properties.capsLock) changeValue.splice(textDisplay.selectionStart, 0, `${keyElement.textContent.toLowerCase()}`);
+                                else changeValue.splice(textDisplay.selectionStart, 0, `${keyElement.textContent.toUpperCase()}`);
+                                
+                            
                             }
-                            else this.properties.value += this.properties.capsLock ? keyElement.textContent.toUpperCase() : keyElement.textContent.toLowerCase();
-                            this.updateDisplay();
+                            else {
+                                if (this.properties.capsLock) changeValue.splice(textDisplay.selectionStart, 0, `${keyElement.textContent.toUpperCase()}`);
+                                else changeValue.splice(textDisplay.selectionStart, 0, `${keyElement.textContent.toLowerCase()}`);
+                            }
+                            this.properties.value = changeValue.join('');
+                            textDisplay.textContent = this.properties.value;
+                            textDisplay.focus();
+                            textDisplay.selectionStart = textDisplay.selectionEnd = cursorPos + 1;
+                     
                         });
                         break;
                 };
@@ -152,13 +208,13 @@ const Keyboard = {
             "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "en",
             "caps", "a", "s", "d", "f", "g", "h", "j", "k", "l", ":", "'", "enter",
             "done", "z", "x", "c", "v", "b", "n", "m", ",", ".", "?", "shift",
-            "space"];
+            "space", "fast_rewind", "fast_forward"];
         
         const keysLayoutRu = [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "backspace",
             "й", "ц", "у", "к", "е", "н", "г", "ш", "щ", "з", "х", "ъ",  "ru",
             "caps", "ф", "ы", "в", "а", "п", "р", "о", "л", "д", "ж", "э", "enter",
         "done", "я", "ч", "с", "м", "и", "т", "ь", "б", "ю", "?", "shift",
-        "space"];
+        "space", "fast_rewind", "fast_forward"];
 
         let i = 0;
 
@@ -198,14 +254,14 @@ const Keyboard = {
             const regLayout = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
                 for (let i = 0; i < 10; i++ ) {
                     this.elements.keys[i].textContent = regLayout[i];
-            }
+                }
             this.elements.keys[47].textContent = "?";
         }
     },
 
     updateDisplay() {
        textDisplay.textContent = this.properties.value;
-       textDisplay.focus();
+       this.setFocusTextarea();
     },
 
     toggleCapsLock() {
@@ -213,6 +269,11 @@ const Keyboard = {
         for (const key of this.elements.keys) {
             if (key.childElementCount === 0 && key.textContent !== "Shift") key.textContent = this.properties.capsLock ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
         }
+    },
+
+    setFocusTextarea() {
+        textDisplay.selectionStart = textDisplay.selectionEnd = this.properties.value.length;
+        textDisplay.focus();
     },
 
     open() { //showKeyboard
@@ -228,8 +289,6 @@ window.addEventListener('load', () => Keyboard.init());
 
 let textDisplay = document.querySelector('.use-keyboard-input');
 textDisplay.addEventListener('click', () => Keyboard.open());
-textDisplay.addEventListener('focus', () => {
-    setTimeout(() => textDisplay.selectionStart = textDisplay.selectionEnd = Keyboard.properties.value.length);
-});
+
 
 
