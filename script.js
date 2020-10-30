@@ -228,5 +228,8 @@ window.addEventListener('load', () => Keyboard.init());
 
 let textDisplay = document.querySelector('.use-keyboard-input');
 textDisplay.addEventListener('click', () => Keyboard.open());
+textDisplay.addEventListener('focus', () => {
+    setTimeout(() => textDisplay.selectionStart = textDisplay.selectionEnd = Keyboard.properties.value.length);
+});
 
 
