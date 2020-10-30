@@ -8,7 +8,8 @@ const Keyboard = {
     properties: {
         value: "",
         capsLock: false,
-        shift: false
+        shift: false,
+        sound: false
     },
 
     init() { //fires onload, making HTML&CSS for main elements
@@ -34,7 +35,7 @@ const Keyboard = {
             "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "en",
             "caps", "a", "s", "d", "f", "g", "h", "j", "k", "l", ":", "'", "enter",
             "done", "z", "x", "c", "v", "b", "n", "m", ",", ".", "?", "shift",
-            "space", "fast_rewind", "fast_forward"];
+            "volume_down", "space", "fast_rewind", "fast_forward"];
         
         const createIconHTML = (icon_name) => (`<i class="material-icons">${icon_name}</i>`);
         let chosenKeysLayout;
@@ -61,6 +62,7 @@ const Keyboard = {
                           
                             textDisplay.focus();
                             textDisplay.selectionStart = textDisplay.selectionEnd = cursorPos;
+                            this.playSound('backspace');
                            
                         });
 
@@ -73,6 +75,7 @@ const Keyboard = {
                         keyElement.addEventListener("click", () => {
                             this.toggleCapsLock();
                             keyElement.classList.toggle("keyboard__key--active", this.properties.capsLock);
+                            this.playSound('caps');
                         });
                         break;
 
@@ -85,7 +88,7 @@ const Keyboard = {
                             else this.shiftMode(false); // numbers to Symbols in keyboard, some letters to symbols
                                
                             keyElement.classList.toggle("keyboard__key--active", this.properties.shift);
-                           
+                            this.playSound('shift');
                         });
                         break;
 
@@ -101,6 +104,7 @@ const Keyboard = {
                           
                             textDisplay.focus();
                             textDisplay.selectionStart = textDisplay.selectionEnd = cursorPos + 2;
+                            this.playSound('enter');
                         });
 
                         break;
@@ -116,6 +120,16 @@ const Keyboard = {
                             });
     
                         break;
+                        
+                        case "volume_down":
+                            keyElement.classList.add("keyboard__key--dark", "keyboard__key--activatable");
+                            keyElement.innerHTML = createIconHTML("volume_down");
+    
+                            keyElement.addEventListener("click", () => {
+                                keyElement.classList.toggle("keyboard__key--active");
+                                this.properties.sound = !this.properties.sound;
+                            });
+                        break
 
                         case "space":
                         keyElement.classList.add("keyboard__key--extra-wide");
@@ -171,6 +185,7 @@ const Keyboard = {
                         default:
                         keyElement.textContent = key.toLowerCase();
                         keyElement.addEventListener("click", () => {
+                            if (this.properties.sound) this.playSound();
                             let changeValue = this.properties.value.split('');
                             let cursorPos = textDisplay.selectionStart;
                             if (this.properties.shift) {
@@ -190,6 +205,7 @@ const Keyboard = {
                             textDisplay.selectionStart = textDisplay.selectionEnd = cursorPos + 1;
                      
                         });
+                      
                         break;
                 };
 
@@ -208,13 +224,13 @@ const Keyboard = {
             "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "en",
             "caps", "a", "s", "d", "f", "g", "h", "j", "k", "l", ":", "'", "enter",
             "done", "z", "x", "c", "v", "b", "n", "m", ",", ".", "?", "shift",
-            "space", "fast_rewind", "fast_forward"];
+            "volume_down",  "space", "fast_rewind", "fast_forward"];
         
         const keysLayoutRu = [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "backspace",
             "й", "ц", "у", "к", "е", "н", "г", "ш", "щ", "з", "х", "ъ",  "ru",
             "caps", "ф", "ы", "в", "а", "п", "р", "о", "л", "д", "ж", "э", "enter",
         "done", "я", "ч", "с", "м", "и", "т", "ь", "б", "ю", "?", "shift",
-        "space", "fast_rewind", "fast_forward"];
+        "volume_down", "space", "fast_rewind", "fast_forward"];
 
         let i = 0;
 
@@ -271,6 +287,19 @@ const Keyboard = {
         }
     },
 
+    playSound(type) {
+        let audio;
+        if (type) {
+            audio = document.querySelector(`audio[data-key=${type}]`);
+        }
+        else {
+            if (this.elements.main.classList.contains('english')) audio = document.querySelector(`audio[data-lang="en"]`);
+            else audio = document.querySelector(`audio[data-lang="ru"]`);
+        }
+        audio.currentTime = 0;
+        audio.play();
+    },
+
     setFocusTextarea() {
         textDisplay.selectionStart = textDisplay.selectionEnd = this.properties.value.length;
         textDisplay.focus();
@@ -283,12 +312,16 @@ const Keyboard = {
     close() { //hide Keyboard
         this.elements.main.classList.add('keyboard--hidden');
     },
+
+    
 }
 
 window.addEventListener('load', () => Keyboard.init());
 
 let textDisplay = document.querySelector('.use-keyboard-input');
 textDisplay.addEventListener('click', () => Keyboard.open());
+
+
 
 
 
