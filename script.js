@@ -25,6 +25,7 @@ const Keyboard = {
         this.createKeys();
         
         this.elements.keys = this.elements.keysContainer.querySelectorAll('.keyboard__key');
+        this.realKeyboard();
  
     },
 
@@ -313,7 +314,20 @@ const Keyboard = {
         this.elements.main.classList.add('keyboard--hidden');
     },
 
-    
+    realKeyboard () {
+        textDisplay.addEventListener('keydown', (e) => {
+            this.elements.keys.forEach(key => {
+                if (e.key == key.textContent) key.classList.add("active");
+            
+            })
+        });
+        textDisplay.addEventListener('keyup', (e) => {
+            this.elements.keys.forEach(key => {
+                if (e.key == key.textContent) key.classList.remove("active");
+         
+            })
+        });
+    },
 }
 
 window.addEventListener('load', () => Keyboard.init());
