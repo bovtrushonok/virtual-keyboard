@@ -125,8 +125,10 @@ const Keyboard = {
                             recognition.continuous = true;
                             recognition.interimResults = true;
                             recognition.lang = "en-US";
+                            
 
                             keyElement.addEventListener('click', () => {
+                                if(!this.elements.main.classList.contains('english')) recognition.lang = "ru-RU";
                                 keyElement.classList.toggle("keyboard__key--active");
                                 if(clickCount % 2 == 0) recognition.start();
                                 else {
@@ -158,6 +160,7 @@ const Keyboard = {
                             keyElement.textContent = key;
                             keyElement.addEventListener("click", (e) => {
                                 this.elements.main.classList.toggle('english');
+                               
                                 if(this.elements.main.classList.contains('english')) e.target.innerHTML = 'en';
                                 else e.target.innerHTML = 'ru';
                                 this.switchKeyboardLang();
