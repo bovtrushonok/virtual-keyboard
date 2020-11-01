@@ -1,8 +1,6 @@
 window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-var recognition = new SpeechRecognition();
-recognition.interimResults = false;
-recognition.lang = 'en-US';
+
 
 const Keyboard = {
     elements: {
@@ -43,7 +41,7 @@ const Keyboard = {
             "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "backspace",
             "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "en",
             "caps", "a", "s", "d", "f", "g", "h", "j", "k", "l", ":", "'", "enter",
-            "done", "z", "x", "c", "v", "b", "n", "m", ",", ".", "?", "shift",
+            "voi", "done", "z", "x", "c", "v", "b", "n", "m", ",", ".", "?", "shift",
             "volume_down", "space", "fast_rewind", "fast_forward"];
         
         const createIconHTML = (icon_name) => (`<i class="material-icons">${icon_name}</i>`);
@@ -124,18 +122,33 @@ const Keyboard = {
                         case "voi":
                             keyElement.classList.add("keyboard__key--wide", "keyboard__key--dark");
                             let clickCount = 0;
-                           
+                            var recognition = new webkitSpeechRecognition();
+                            recognition.continuous = true;
+                            recognition.interimResults = true;
+                            recognition.lang = "en-US";
+
                             keyElement.addEventListener('click', () => {
-                                if(clickCount % 2 === 0) recognition.start();
+                                if(clickCount % 2 == 0) recognition.start();
                                 else {
                                     recognition.stop();
-                                    recognition.onresult = (e) => {
-                                        console.log(e.results);
-                                        let res = e.results.transcript;
-                                        textDisplay.textContent = res;
-                                        console.log(res);
-                                    }
-                                   
+                                    recognition.onresult =  function(event) {
+                                        var interim_transcript = '';
+                                        var final_transcript = '';
+
+                                        for (var i = event.resultIndex; i < event.results.length; ++i) {
+                                            // Verify if the recognized text is the last with the isFinal property
+                                            if (event.results[i].isFinal) {
+                                                final_transcript += event.results[i][0].transcript;
+                                            } else {
+                                                interim_transcript += event.results[i][0].transcript;
+                                            }
+                                        }
+
+                                        // Choose which result may be useful for you
+
+                                        textDisplay.textContent = final_transcript;
+
+                                    };
                                 }
                                 clickCount++;
                             });
@@ -253,13 +266,13 @@ const Keyboard = {
         const keysLayoutEn = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "backspace",
             "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "en",
             "caps", "a", "s", "d", "f", "g", "h", "j", "k", "l", ":", "'", "enter",
-            "done", "z", "x", "c", "v", "b", "n", "m", ",", ".", "?", "shift",
+            "voi", "done", "z", "x", "c", "v", "b", "n", "m", ",", ".", "?", "shift",
             "volume_down",  "space", "fast_rewind", "fast_forward"];
         
         const keysLayoutRu = [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "backspace",
             "й", "ц", "у", "к", "е", "н", "г", "ш", "щ", "з", "х", "ъ",  "ru",
             "caps", "ф", "ы", "в", "а", "п", "р", "о", "л", "д", "ж", "э", "enter",
-        "done", "я", "ч", "с", "м", "и", "т", "ь", "б", "ю", "?", "shift",
+        "voi", "done", "я", "ч", "с", "м", "и", "т", "ь", "б", "ю", "?", "shift",
         "volume_down", "space", "fast_rewind", "fast_forward"];
 
         let i = 0;
