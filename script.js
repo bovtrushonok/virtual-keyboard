@@ -120,7 +120,7 @@ const Keyboard = {
                         break;
 
                         case "voi":
-                            keyElement.classList.add("keyboard__key--wide", "keyboard__key--dark");
+                            keyElement.classList.add("keyboard__key--wide", "keyboard__key--dark", "keyboard__key--activatable");
                             let clickCount = 0;
                             var recognition = new webkitSpeechRecognition();
                             recognition.continuous = true;
@@ -128,6 +128,7 @@ const Keyboard = {
                             recognition.lang = "en-US";
 
                             keyElement.addEventListener('click', () => {
+                                keyElement.classList.toggle("keyboard__key--active");
                                 if(clickCount % 2 == 0) recognition.start();
                                 else {
                                     recognition.stop();
