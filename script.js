@@ -119,7 +119,7 @@ const Keyboard = {
 
                         case "voi":
                             keyElement.classList.add("keyboard__key--wide", "keyboard__key--dark", "keyboard__key--activatable");
-                            keyElement.innerHTML = createIconHTML("settings_voice");
+                            //keyElement.innerHTML = createIconHTML("settings_voice");
                             let clickCount = 0;
                             var recognition = new webkitSpeechRecognition();
                             recognition.continuous = true;
@@ -326,7 +326,7 @@ const Keyboard = {
     toggleCapsLock() {
         this.properties.capsLock = !this.properties.capsLock;
         for (const key of this.elements.keys) {
-            if (key.childElementCount === 0 && key.textContent !== "Shift") key.textContent = this.properties.capsLock ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
+            if (key.childElementCount === 0 && key.textContent !== "Shift" && key.textContent !== "voi") key.textContent = this.properties.capsLock ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
         }
     },
 
