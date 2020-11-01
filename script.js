@@ -12,6 +12,8 @@ const Keyboard = {
         sound: false
     },
 
+  
+   
     init() { //fires onload, making HTML&CSS for main elements
         this.elements.main = document.createElement('div');
         this.elements.keysContainer = document.createElement('div');
@@ -35,7 +37,7 @@ const Keyboard = {
             "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "backspace",
             "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "en",
             "caps", "a", "s", "d", "f", "g", "h", "j", "k", "l", ":", "'", "enter",
-            "done", "z", "x", "c", "v", "b", "n", "m", ",", ".", "?", "shift",
+            "voi", "done", "z", "x", "c", "v", "b", "n", "m", ",", ".", "?", "shift",
             "volume_down", "space", "fast_rewind", "fast_forward"];
         
         const createIconHTML = (icon_name) => (`<i class="material-icons">${icon_name}</i>`);
@@ -92,6 +94,7 @@ const Keyboard = {
                                
                             keyElement.classList.toggle("keyboard__key--active", this.properties.shift);
                             if (this.properties.sound) this.playSound('shift');
+                         
                         });
                         break;
 
@@ -111,6 +114,24 @@ const Keyboard = {
                         });
 
                         break;
+
+                        case "voi":
+                            keyElement.classList.add("keyboard__key--wide", "keyboard__key--dark");
+                            let clickCount = 0;
+                            var recognition = new SpeechRecognition();
+                            recognition.interimResults = false;
+                            recognition.lang = 'en-US';
+                            keyElement.addEventListener('click', () => {
+                                if(clickCount % 2 === 0) recognition.start();
+                                else {
+                                    recognition.stop();
+                                    recognition.onresult = function(e) {
+                                        recognition.onend(console.log(e));
+                                    }
+                                   
+                                }
+                                clickCount++;
+                            });
                        
                         case "en":
                             keyElement.classList.add("keyboard__key--wide");
@@ -191,11 +212,9 @@ const Keyboard = {
                             let changeValue = this.properties.value.split('');
                             let cursorPos = textDisplay.selectionStart;
                             if (this.properties.shift) {
-                                
                                 if (this.properties.capsLock) changeValue.splice(textDisplay.selectionStart, 0, `${keyElement.textContent.toLowerCase()}`);
                                 else changeValue.splice(textDisplay.selectionStart, 0, `${keyElement.textContent.toUpperCase()}`);
-                                
-                            
+                                   
                             }
                             else {
                                 if (this.properties.capsLock) changeValue.splice(textDisplay.selectionStart, 0, `${keyElement.textContent.toUpperCase()}`);
@@ -309,6 +328,8 @@ const Keyboard = {
         textDisplay.focus();
     },
 
+   
+
     open() { //showKeyboard
         this.elements.main.classList.remove('keyboard--hidden');
     },
@@ -320,8 +341,12 @@ const Keyboard = {
     realKeyboard () {
         textDisplay.addEventListener('keydown', (e) => {
             this.elements.keys.forEach(key => {
-                if (e.key == key.textContent) key.classList.add("active");
-      
+                if (e.key == key.textContent) {
+                    key.classList.add("active");
+                    this.properties.value += key.innerText;
+                    console.log(this.properties.value);
+                    textDisplay.focus();
+                }
                 
                 switch(e.code) {
                     case 'Space':
@@ -407,6 +432,9 @@ window.addEventListener('load', () => Keyboard.init());
 
 let textDisplay = document.querySelector('.use-keyboard-input');
 textDisplay.addEventListener('click', () => Keyboard.open());
+window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+
 
 
 
