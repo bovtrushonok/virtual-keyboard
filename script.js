@@ -1,7 +1,5 @@
 window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-
-
 const Keyboard = {
     elements: {
         main: null, //keyboard itself
@@ -121,6 +119,7 @@ const Keyboard = {
 
                         case "voi":
                             keyElement.classList.add("keyboard__key--wide", "keyboard__key--dark", "keyboard__key--activatable");
+                            keyElement.innerHTML = createIconHTML("settings_voice");
                             let clickCount = 0;
                             var recognition = new webkitSpeechRecognition();
                             recognition.continuous = true;
@@ -307,7 +306,7 @@ const Keyboard = {
                 for (let i = 0; i < 10; i++ ) {
                     this.elements.keys[i].textContent = shiftLayout[i];
                 }
-                this.elements.keys[47].textContent = ",";
+                this.elements.keys[48].textContent = ",";
             }
         }
         else { //shift inactive
@@ -315,7 +314,7 @@ const Keyboard = {
                 for (let i = 0; i < 10; i++ ) {
                     this.elements.keys[i].textContent = regLayout[i];
                 }
-            this.elements.keys[47].textContent = "?";
+            this.elements.keys[48].textContent = "?";
         }
     },
 
