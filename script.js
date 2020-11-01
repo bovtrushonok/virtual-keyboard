@@ -42,6 +42,8 @@ const Keyboard = {
         let chosenKeysLayout;
         if(this.elements.main.classList.contains('english')) chosenKeysLayout = keysLayoutEn;
         else  chosenKeysLayout = keysLayoutRu;
+
+        
         chosenKeysLayout.forEach(key => {
                 const keyElement = document.createElement("button");
                  const insertLineBreak = ["backspace", "en", "enter", "shift"].indexOf(key) !== -1;
@@ -52,7 +54,7 @@ const Keyboard = {
 
                     switch (key) {
                         case "backspace":
-                        keyElement.classList.add("keyboard__key--wide");
+                        keyElement.classList.add("keyboard__key--wide", "backspace");
                         keyElement.innerHTML = createIconHTML("backspace");
                         keyElement.addEventListener("click", () => {
                             let changeValue = this.properties.value.split('');
@@ -70,7 +72,7 @@ const Keyboard = {
                         break;
 
                         case "caps":
-                        keyElement.classList.add("keyboard__key--wide", "keyboard__key--activatable");
+                        keyElement.classList.add("keyboard__key--wide", "keyboard__key--activatable", "caps");
                         keyElement.innerHTML = createIconHTML("keyboard_capslock");
 
                         keyElement.addEventListener("click", () => {
@@ -81,7 +83,7 @@ const Keyboard = {
                         break;
 
                         case "shift":
-                        keyElement.classList.add("keyboard__key--wide", "keyboard__key--activatable");
+                        keyElement.classList.add("keyboard__key--wide", "keyboard__key--activatable", "shift");
                         keyElement.textContent = 'Shift';
                         keyElement.addEventListener("click", () => {
                             this.properties.shift = !this.properties.shift;
@@ -94,7 +96,7 @@ const Keyboard = {
                         break;
 
                         case "enter":
-                        keyElement.classList.add("keyboard__key--wide");
+                        keyElement.classList.add("keyboard__key--wide", "enter");
                         keyElement.innerHTML = createIconHTML("keyboard_return");
                         keyElement.addEventListener("click", () => {
                             let changeValue = this.properties.value.split('');
@@ -133,7 +135,7 @@ const Keyboard = {
                         break
 
                         case "space":
-                        keyElement.classList.add("keyboard__key--extra-wide");
+                        keyElement.classList.add("keyboard__key--extra-wide", "space");
                         keyElement.innerHTML = createIconHTML("space_bar");
 
                         keyElement.addEventListener("click", () => {
@@ -147,6 +149,7 @@ const Keyboard = {
                             textDisplay.selectionStart = textDisplay.selectionEnd = cursorPos + 1;
                         });
 
+                        
                         break;
 
                         case "fast_rewind":
@@ -171,8 +174,6 @@ const Keyboard = {
 
                         break;
                       
-
-
                         case "done":
                         keyElement.classList.add("keyboard__key--wide", "keyboard__key--dark");
                         keyElement.innerHTML = createIconHTML("check_circle");
@@ -209,6 +210,8 @@ const Keyboard = {
                       
                         break;
                 };
+            
+                              
 
            
                fragment.append(keyElement);
@@ -318,13 +321,83 @@ const Keyboard = {
         textDisplay.addEventListener('keydown', (e) => {
             this.elements.keys.forEach(key => {
                 if (e.key == key.textContent) key.classList.add("active");
+      
+                
+                switch(e.code) {
+                    case 'Space':
+                    this.elements.keysContainer.querySelector('.space').classList.add("active");
+                    break
+                    case 'ShiftRight':
+                        this.properties.shift = !this.properties.shift;
+                        if (this.properties.shift) this.shiftMode(true);
+                        else this.shiftMode(false); // numbers to Symbols in keyboard, some letters to symbols
+                        this.elements.keysContainer.querySelector('.shift').classList.add("active");
+                        this.elements.keysContainer.querySelector('.shift').classList.toggle("keyboard__key--active", this.properties.shift);
+                    break
+                    case 'ShiftLeft':
+                        this.properties.shift = !this.properties.shift;
+                        if (this.properties.shift) this.shiftMode(true);
+                        else this.shiftMode(false); // numbers to Symbols in keyboard, some letters to symbols
+                        this.elements.keysContainer.querySelector('.shift').classList.add("active");
+                        this.elements.keysContainer.querySelector('.shift').classList.toggle("keyboard__key--active", this.properties.shift);
+                    break
+                    case 'Enter':
+                        let changeValue = this.properties.value.split('');
+                        let cursorPos = textDisplay.selectionStart;
+                        changeValue.splice(textDisplay.selectionStart, 0, '\n');
+                        this.properties.value = changeValue.join('');
+                        textDisplay.textContent = this.properties.value;
+                        this.elements.keysContainer.querySelector('.enter').classList.add("active");
+                    break
+                    case 'CapsLock':
+                        this.toggleCapsLock();
+                        this.elements.keysContainer.querySelector('.caps').classList.add("active");
+                        this.elements.keysContainer.querySelector('.caps').classList.toggle("keyboard__key--active", this.properties.capsLock);
+                    break
+                    case 'Backspace':
+                        let changedValue = this.properties.value.split('');
+                        let cursorPosition = textDisplay.selectionStart - 1;
+                        changedValue.splice(textDisplay.selectionStart - 1, 1);
+                        this.properties.value = changedValue.join('');
+                        textDisplay.textContent = this.properties.value;
+                        this.elements.keysContainer.querySelector('.backspace').classList.add("active");
+                    break
+                    default:
+                    return;
+                }
             
             })
         });
         textDisplay.addEventListener('keyup', (e) => {
             this.elements.keys.forEach(key => {
                 if (e.key == key.textContent) key.classList.remove("active");
-         
+                switch(e.code) {
+                    case 'Space':
+                    this.elements.keysContainer.querySelector('.space').classList.remove("active");
+                    break
+                    case 'ShiftRight':
+                    this.elements.keysContainer.querySelector('.shift').classList.remove("active");
+                       
+                    break
+                    case 'ShiftLeft':
+                    this.elements.keysContainer.querySelector('.shift').classList.remove("active");
+                    break
+                    case 'Enter':
+                    this.elements.keysContainer.querySelector('.enter').classList.remove("active");
+                    textDisplay.focus();
+                    textDisplay.selectionStart = textDisplay.selectionEnd = cursorPos + 2;
+                    break
+                    case 'CapsLock':
+                    this.elements.keysContainer.querySelector('.caps').classList.remove("active");
+                    break
+                    case 'Backspace':
+                    this.elements.keysContainer.querySelector('.backspace').classList.remove("active");
+                    textDisplay.focus();
+                    textDisplay.selectionStart = textDisplay.selectionEnd = cursorPosition;
+                    break
+                    default:
+                    return;
+                }
             })
         });
     },
