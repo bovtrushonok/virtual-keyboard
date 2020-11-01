@@ -1,3 +1,9 @@
+window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+var recognition = new SpeechRecognition();
+recognition.interimResults = false;
+recognition.lang = 'en-US';
+
 const Keyboard = {
     elements: {
         main: null, //keyboard itself
@@ -37,7 +43,7 @@ const Keyboard = {
             "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "backspace",
             "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "en",
             "caps", "a", "s", "d", "f", "g", "h", "j", "k", "l", ":", "'", "enter",
-            "voi", "done", "z", "x", "c", "v", "b", "n", "m", ",", ".", "?", "shift",
+            "done", "z", "x", "c", "v", "b", "n", "m", ",", ".", "?", "shift",
             "volume_down", "space", "fast_rewind", "fast_forward"];
         
         const createIconHTML = (icon_name) => (`<i class="material-icons">${icon_name}</i>`);
@@ -118,15 +124,16 @@ const Keyboard = {
                         case "voi":
                             keyElement.classList.add("keyboard__key--wide", "keyboard__key--dark");
                             let clickCount = 0;
-                            var recognition = new SpeechRecognition();
-                            recognition.interimResults = false;
-                            recognition.lang = 'en-US';
+                           
                             keyElement.addEventListener('click', () => {
                                 if(clickCount % 2 === 0) recognition.start();
                                 else {
                                     recognition.stop();
-                                    recognition.onresult = function(e) {
-                                        recognition.onend(console.log(e));
+                                    recognition.onresult = (e) => {
+                                        console.log(e.results);
+                                        let res = e.results.transcript;
+                                        textDisplay.textContent = res;
+                                        console.log(res);
                                     }
                                    
                                 }
@@ -432,7 +439,7 @@ window.addEventListener('load', () => Keyboard.init());
 
 let textDisplay = document.querySelector('.use-keyboard-input');
 textDisplay.addEventListener('click', () => Keyboard.open());
-window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
 
 
 
