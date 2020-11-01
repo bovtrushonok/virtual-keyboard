@@ -65,7 +65,7 @@ const Keyboard = {
                           
                             textDisplay.focus();
                             textDisplay.selectionStart = textDisplay.selectionEnd = cursorPos;
-                            this.playSound('backspace');
+                            if (this.properties.sound) this.playSound('backspace');
                            
                         });
 
@@ -78,7 +78,7 @@ const Keyboard = {
                         keyElement.addEventListener("click", () => {
                             this.toggleCapsLock();
                             keyElement.classList.toggle("keyboard__key--active", this.properties.capsLock);
-                            this.playSound('caps');
+                            if (this.properties.sound) this.playSound('caps');
                         });
                         break;
 
@@ -91,7 +91,7 @@ const Keyboard = {
                             else this.shiftMode(false); // numbers to Symbols in keyboard, some letters to symbols
                                
                             keyElement.classList.toggle("keyboard__key--active", this.properties.shift);
-                            this.playSound('shift');
+                            if (this.properties.sound) this.playSound('shift');
                         });
                         break;
 
@@ -107,7 +107,7 @@ const Keyboard = {
                           
                             textDisplay.focus();
                             textDisplay.selectionStart = textDisplay.selectionEnd = cursorPos + 2;
-                            this.playSound('enter');
+                            if (this.properties.sound) this.playSound('enter');
                         });
 
                         break;
